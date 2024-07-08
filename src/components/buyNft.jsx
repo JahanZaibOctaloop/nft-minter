@@ -3,9 +3,8 @@ import Web3 from 'web3';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-
 const ContractAddress = '0x2a0889cb39d7f2452c21760D8967E6f3978f1b4f';
-const abi =  [
+const abi = [
     {
         "inputs": [
             {
@@ -730,9 +729,10 @@ const abi =  [
         "type": "function"
     }
 ];
+
 function BuyNft() {
     const [nfts, setNfts] = useState([]);
- 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getAllLandNfts = async () => {
@@ -751,7 +751,6 @@ function BuyNft() {
                 }
                 console.log(connectedAddress)
                 const GetAllLandNfts = await marketContract.methods.getAllLandListedNfts().call();
-                console.log(GetAllLandNfts);
                 const processedNfts = await Promise.all(GetAllLandNfts.map(async (nft) => {
                     try {
                         const response = await fetch(nft.uriData);
@@ -759,7 +758,7 @@ function BuyNft() {
                         return {
                             price: web3.utils.fromWei(nft.listedData.price, 'ether'),
                             tokenId: nft.listedData.tokenId,
-                            listCount:nft.listCount,
+                            listCount: nft.listCount,
                             ...metadata
                         };
                     } catch (error) {
@@ -769,16 +768,17 @@ function BuyNft() {
                 }));
                 const validNfts = processedNfts.filter(nft => nft !== null);
                 setNfts(validNfts);
-
+                setLoading(false);  
             } catch (error) {
                 console.error('Error fetching NFTs:', error);
+                setLoading(false); 
             }
         };
 
         getAllLandNfts();
     }, []);
 
-    const handlebuyLandNft = async (totalPrice,token) => {
+    const handlebuyLandNft = async (totalPrice, token) => {
         try {
             const web3 = new Web3(window.ethereum);
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -786,8 +786,8 @@ function BuyNft() {
             const marketContract = new web3.eth.Contract(abi, ContractAddress);
             const correctToken = (Number(token));
             const weiPrice = web3.utils.toWei(totalPrice, 'ether');
-            console.log(correctToken,weiPrice,connectedAddress)
-           const buyNft= await marketContract.methods.buyLandNft(correctToken, weiPrice).send({
+            console.log(correctToken, weiPrice, connectedAddress);
+            const buyNft = await marketContract.methods.buyLandNft(correctToken, weiPrice).send({
                 from: connectedAddress,
                 value: weiPrice
             });
@@ -795,16 +795,17 @@ function BuyNft() {
             if (buyNft) {
                 Swal.fire(
                     'Success!',
-                    'Your NFT was Buy successfully.',
+                    'Your NFT was bought successfully.',
                     'success'
                 );
             } else {
                 Swal.fire(
                     'Failed!',
-                    'Failed to Buy your NFT.',
+                    'Failed to buy your NFT.',
                     'error'
                 );
-            }        } catch (error) {
+            }
+        } catch (error) {
             console.error('Error purchasing NFT:', error);
         }
     };
@@ -813,48 +814,55 @@ function BuyNft() {
         <div>
             <div className="container-fluid">
                 <div className="row">
-                    <nav class="navbar navbar-expand-lg navbar-light bg-dark text-light">
-                      <div class="container-fluid">
-                        <Link class="navbar-brand text-light" to="/">NftMarketPlace</Link>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                          <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                              <Link class="nav-link active text-light" aria-current="page" to="/">Home</Link>
-                            </li>
-                            <li class="nav-item">
-                              <Link class="nav-link text-light" to="/list_nft">Mint and Approve</Link>
-                            </li>
-                          </ul>  
+                    <nav className="navbar navbar-expand-lg navbar-light bg-dark text-light">
+                        <div className="container-fluid">
+                            <Link className="navbar-brand text-light" to="/">NftMarketPlace</Link>
+                            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
+                            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li className="nav-item">
+                                        <Link className="nav-link active text-light" aria-current="page" to="/">Home</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link className="nav-link text-light" to="/list_nft">Mint and Approve</Link>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                      </div>
                     </nav>
                     <h1 className='m-3'>Buy NFT</h1>
 
-                    {nfts.length > 0 ? (
-
-                        nfts.map(nft => (
-                            <div className="col-sm-3 mt-2 mb-2" key={nft.tokenId}>
-                                <div className="card">
-                                    <img height={300} width={'100%'} src={nft.image} alt={nft.name} />
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col-sm-6">
-                                                <p className="card-title"> {nft.tokenId}{nft.name}</p>
+                    {loading ? (
+                        <div className="text-center">
+                            <div className="spinner-border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    ) : (
+                        nfts.length > 0 ? (
+                            nfts.map(nft => (
+                                <div className="col-sm-3 mt-2 mb-2" key={nft.tokenId}>
+                                    <div className="card">
+                                        <img height={300} width={'100%'} src={nft.image} alt={nft.name} />
+                                        <div className="card-body">
+                                            <div className="row">
+                                                <div className="col-sm-6">
+                                                    <p className="card-title">{nft.tokenId} {nft.name}</p>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                    <p className="card-text">Price: {nft.price} ETH</p>
+                                                </div>
                                             </div>
-                                            <div className="col-sm-6">
-                                                <p className="card-text">Price: {nft.price} ETH</p>
-                                            </div>
+                                            <button className="btn btn-primary" onClick={() => handlebuyLandNft(nft.price, nft.listCount)}>Buy Now</button>
                                         </div>
-                                        <button className="btn btn-primary" onClick={() => handlebuyLandNft(nft.price,nft.listCount)}>Buy Now</button>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No NFTs found.</p>
+                            ))
+                        ) : (
+                            <p>No NFTs found.</p>
+                        )
                     )}
                 </div>
             </div>

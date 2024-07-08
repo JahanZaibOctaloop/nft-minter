@@ -1517,7 +1517,6 @@ const abi = [
 
 const MyNFTGallery = () => {
     const [nfts, setNfts] = useState([]);
-    const [price, setPrice] = useState(null);
     const [tokenId, setTokenId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);

@@ -736,7 +736,6 @@ function ListLandNft(props) {
     const { id } = props;
 
     useEffect(() => {
-        // Update the tokenId when the id prop changes
         if (id) {
             setTokenId(id);
         }
