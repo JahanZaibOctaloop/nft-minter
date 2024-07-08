@@ -1,3 +1,6 @@
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import React ,{useState,useEffect} from 'react'
 import Web3 from 'web3';
 import Swal from 'sweetalert2';
@@ -865,27 +868,24 @@ function NftMint() {
                 const accounts = await web3.eth.getAccounts();
                 const contract = new web3.eth.Contract(abi, ContractAddress);
 
-                // Whitelist the user
                 setStatus('Authorizing user...');
                 await contract.methods.whitelist(accounts[0]).send({ from: accounts[0] });
 
-                // Mint the NFT
                 setStatus('Minting NFT...');
 				console.log(MetaDataUrl)
                 const tx = await contract.methods.safeMint(MetaDataUrl).send({ from: accounts[0] });
 				if (tx.status) {
-					Swal.fire(
-						'Success!',
-						'Your NFT was minted successfully.',
-						'success'
-					);
-				} else {
-					Swal.fire(
-						'Failed!',
-						'Failed to mint NFT.',
-						'error'
-					);
-				}
+                    Swal.fire(
+                        'Success!',
+                        'Your NFT was minted successfully.',
+                        'success'
+                    ).then(() => {
+						const closeButton = document.querySelector('#mintnft .btn-close');
+                        closeButton.click();
+						setName('');
+                        setDescription('');
+                    });
+                }
                 console.log('NFT minted successfully:', tx);
                 setStatus('NFT minted successfully');
 				fetchMetadata(MetaDataUrl)
@@ -921,7 +921,6 @@ function NftMint() {
 
   return (
     <div>
-
 
 <div class="modal fade" id="mintnft" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">

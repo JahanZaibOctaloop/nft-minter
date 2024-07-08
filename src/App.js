@@ -19,7 +19,7 @@ function App() {
       
         <Routes>
           <Route path="/" element={<BuyNft />} />
-          <Route path="/show_nft" element={<MyNFTGallery />} />
+          <Route path="/list_nft" element={<MyNFTGallery />} />
           <Route path="/mint_token" element={<MintToken/>} />
           <Route path="/check_blance" element={<CheckBalance/>} />
           <Route path="/all_minting" element={<AllMinting/>} />

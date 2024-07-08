@@ -1610,6 +1610,7 @@ const MyNFTGallery = () => {
        <NftMint/>
        <ListLandNft id={tokenId}/>
             <div className="container-fluid mb-4">
+                <Navbar/>
                 <h1 className='text-center m-5'>Admin Nft MarketPlace</h1>
                 <div className="row">
                    <table class="table">

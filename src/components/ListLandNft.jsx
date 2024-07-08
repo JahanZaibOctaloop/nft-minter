@@ -762,6 +762,9 @@ function ListLandNft(props) {
                     'Your NFT was listed successfully.',
                     'success'
                 );
+                const closeButton = document.querySelector('#mintnft .btn-close');
+                closeButton.click();
+                setPrice('');
             } else {
                 Swal.fire(
                     'Failed!',
