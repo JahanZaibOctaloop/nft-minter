@@ -1609,10 +1609,10 @@ const MyNFTGallery = () => {
        <NftMint/>
        <ListLandNft id={tokenId}/>
             <div className="container-fluid mb-4">
-                <Navbar/>
+                <Navbar/> 
                 <h1 className='text-center m-5'>Admin Nft MarketPlace</h1>
                 <div className="row">
-                   <table class="table">
+                   <table class="table" style={{height:"500px",overflow:'scroll'}}>
                      <thead>
                         <button className='btn btn-dark' data-bs-toggle="modal" data-bs-target="#mintnft">SafeMint</button>
                        <tr>

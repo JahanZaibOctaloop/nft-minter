@@ -11,6 +11,7 @@ import CheckBalance from './components/Checkblance';
 import AllMinting from './components/AllMinting';
 import NftMint from './components/NftMint';
 import BuyNft from './components/buyNft';
+import AdminWhitelist from './components/whiteList';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
           <Route path="/all_minting" element={<AllMinting/>} />
           <Route path="/mint_nft" element={<NftMint/>} />
           <Route path="/buy_nft" element={<BuyNft/>} />
+          <Route path="/admin_white_list" element={<AdminWhitelist/>} />
+
         </Routes>
       </div>
     </Router>

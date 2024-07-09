@@ -1,14 +1,10 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import React ,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import Swal from 'sweetalert2';
 
-
-
 const ContractAddress = '0x2e4B2f297b751EaB274e06A7a307d23c54AE23D5';
-// const ContractAddress = '0x14e444a01Dd378Fd37380E8d01e65D2c4321ED82'
 
 const abi = [
 	{
@@ -735,234 +731,129 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_seller",
-				"type": "address"
-			}
-		],
-		"name": "updateTokenId",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_authorized",
-				"type": "address"
-			}
-		],
-		"name": "whitelist",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "whitelisted",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_tokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_seller",
+					"type": "address"
+				}
+			],
+			"name": "updateTokenId",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_authorized",
+					"type": "address"
+				}
+			],
+			"name": "whitelist",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"name": "whitelisted",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
 
-function NftMint() {
-    const [Image ,setImage] = useState();
-    const [Name , setName] = useState();
-    const [status , setStatus] = useState();
-    const [Description , setDescription] = useState();
-    const [metadataUrl, setMetadataUrl] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
-    const [nftname ,setNftName] = useState('');
-    const [nftdescription , setNftDescription] = useState(''); 
-
-
-
-    const handleImageChange = (e) =>{
-        setImage(e.target.files[0]);
-    }
-
-    const handleSubmit = async(e) => {
-        e.preventDefault();
-       setStatus('Uploading Image .....')
-       try {
-        const pinataApiKey = 'ddf06f1596c0ffcad24e';
-        const pinataSecretApiKey = '1215208fc2eb9d0cfff237781b0546fbfde3edca51845a9aa7ac5d02805ee08b';
-        const formData = new FormData();
-        formData.append('file',Image);
-
-        const imageUploadResponse = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-            method: 'POST',
-            headers: {
-              'pinata_api_key': pinataApiKey,
-              'pinata_secret_api_key': pinataSecretApiKey
-            },
-            body: formData
-          });
-
-          if(!imageUploadResponse.ok){
-            throw new Error('Failed to upload image');
-          }
-          const imageUploadData = await imageUploadResponse.json();
-          const ImageUrl = `https://gateway.pinata.cloud/ipfs/${imageUploadData.IpfsHash}`;
-          setStatus('Image Uploading Creating .... MetaData');
-          
-          const MetaData = {
-            name:Name,
-            description:Description,
-            image:ImageUrl
-          }
-		  console.log(MetaData)
-          const MetaDataUploadResponce = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
-            method:'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                'pinata_api_key': pinataApiKey,
-                'pinata_secret_api_key': pinataSecretApiKey
-            },
-            body:JSON.stringify(MetaData),
-          });
-          if (!MetaDataUploadResponce.ok) {
-            throw new Error('Failed to upload metadata');
-          }
-          const MetaDataUploadData = await MetaDataUploadResponce.json();
-          const MetaDataUrl = `https://gateway.pinata.cloud/ipfs/${MetaDataUploadData.IpfsHash}`;
-          setStatus('MetaData Uploaded ...Minting Nft')
-		  console.log(MetaDataUrl)
-		  await authorizeAndMint(MetaDataUrl);
-		} catch (error) {
-        console.error('Error in Uploading the MetaData' ,error)
-        setStatus('Error occurred. Please try again.');
-       }
-    }
-
-	const authorizeAndMint = async (MetaDataUrl) => {
-        if (typeof window.ethereum !== 'undefined') {
-            const web3 = new Web3(window.ethereum);
+    function AdminWhitelist() {
+        const [addressToWhitelist, setAddressToWhitelist] = useState('');
+        const [status, setStatus] = useState('');
+        const [adminAccount, setAdminAccount] = useState('');
+    
+        useEffect(() => {
+            const getAdminAccount = async () => {
+                if (typeof window.ethereum !== 'undefined') {
+                    const web3 = new Web3(window.ethereum);
+                    const contract = new web3.eth.Contract(abi, ContractAddress);
+                    const owner = await contract.methods.owner().call();
+                    setAdminAccount(owner);
+                }
+            };
+            getAdminAccount();
+        }, []);
+    
+        const handleWhitelistSubmit = async (e) => {
+            e.preventDefault();
+            setStatus('Whitelisting address...');
+            if (!Web3.utils.isAddress(addressToWhitelist)) {
+                setStatus('Invalid address');
+                return;
+            }
             try {
+                const web3 = new Web3(window.ethereum);
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const accounts = await web3.eth.getAccounts();
-                const contract = new web3.eth.Contract(abi, ContractAddress);
-
-                setStatus('Minting NFT...');
-				console.log(MetaDataUrl)
-                const tx = await contract.methods.safeMint(MetaDataUrl).send({ from: accounts[0] });
-				if (tx.status) {
-                    Swal.fire(
-                        'Success!',
-                        'Your NFT was minted successfully.',
-                        'success'
-                    ).then(() => {
-						const closeButton = document.querySelector('#mintnft .btn-close');
-                        closeButton.click();
-						setName('');
-                        setDescription('');
-                    });
-                }
-                console.log('NFT minted successfully:', tx);
-                setStatus('NFT minted successfully');
-				fetchMetadata(MetaDataUrl)
-            } catch (error) {
-                console.error('Error in authorizing or minting the NFT', error);
-                setStatus('Error occurred. Please try again.');
-            }
-        } else {
-            setStatus('Ethereum wallet not found');
-        }
-    };
+                const currentAccount = accounts[0];
     
-    useEffect(() => {
-        if (metadataUrl) {
-            fetchMetadata();
-        }
-    }, [metadataUrl]);
-
-    const fetchMetadata = async () => {
-        try {
-            const response = await fetch(metadataUrl);
-            if (!response.ok) {
-                throw new Error('Failed to fetch metadata');
+                if (currentAccount.toLowerCase() !== adminAccount.toLowerCase()) {
+                    Swal.fire('Error', 'Only the admin can whitelist addresses.', 'error');
+                    setStatus('Only the admin can whitelist addresses.');
+                    return;
+                }
+    
+                const contract = new web3.eth.Contract(abi, ContractAddress);
+                const gasLimit = await contract.methods.whitelist(addressToWhitelist).estimateGas({ from: currentAccount });
+                await contract.methods.whitelist(addressToWhitelist).send({ from: currentAccount, gas: gasLimit });
+    
+                setStatus('Address whitelisted successfully');
+                Swal.fire('Success!', 'Address has been whitelisted.', 'success');
+                setAddressToWhitelist('');
+            } catch (error) {
+                console.error('Error in whitelisting address', error);
+                setStatus('Error occurred. Please try again.');
+                Swal.fire('Error', 'An error occurred during the whitelisting process. Please check the console for details.', 'error');
             }
-            const metadata = await response.json();
-            setImageUrl(metadata.image);
-            setNftName(metadata.name)
-            setNftDescription(metadata.description)
-        } catch (error) {
-            console.error('Error fetching metadata:', error);
-        }
+        };
+    
+        return (
+            <div>
+                <h2>Admin Whitelist</h2>
+                <form onSubmit={handleWhitelistSubmit}>
+                    <label>Address to Whitelist:</label>
+                    <input
+                        type="text"
+                        value={addressToWhitelist}
+                        onChange={(e) => setAddressToWhitelist(e.target.value)}
+                        className="form-control"
+                        required
+                    />
+                    <br />
+                    <button className="btn btn-primary" type="submit">Whitelist Address</button>
+                </form>
+                <p>{status}</p>
+            </div>
+        );
     }
-
-  return (
-    <div>
-
-<div class="modal fade" id="mintnft" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Mint Nft</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-	  <div className="contaier">
-	<div className="row">
-    <div className="col-sm-12">
-    <div className="card">
-		<p>{status}</p>
-  <div className="card-body">
-    <form onSubmit={handleSubmit}>
-      <label>Name:</label>
-      <input type="text" value={Name} onChange={(e) => setName(e.target.value)} className='form-control' required />
-      <br />
-      <label>Image:</label>
-      <input type="file" className='form-control' onChange={handleImageChange} required />
-      <br />
-      <label>Description:</label>
-      <textarea className='form-control' value={Description} onChange={(e) => setDescription(e.target.value)} required></textarea>
-      <br />
-      <button className='btn btn-success' type="submit">Mint NFT</button>
-    </form>
-  </div>
-</div>
-</div>
-
-</div>
-</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-  )
-}
-
-
-export default NftMint
+export default AdminWhitelist;

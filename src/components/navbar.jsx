@@ -18,6 +18,9 @@ function Navbar() {
                             <li class="nav-item">
                               <Link class="nav-link text-light" to="/list_nft">Mint and Approve</Link>
                             </li>
+                            <li class="nav-item">
+                              <Link class="nav-link text-light border bg-light text-dark" to="/admin_white_list">WhiteList User</Link>
+                            </li>
                           </ul>  
                         </div>
                       </div>
