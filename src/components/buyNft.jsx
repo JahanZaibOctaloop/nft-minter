@@ -3,7 +3,8 @@ import Web3 from 'web3';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const ContractAddress = '0x2a0889cb39d7f2452c21760D8967E6f3978f1b4f';
+// const ContractAddress = '0x2a0889cb39d7f2452c21760D8967E6f3978f1b4f';
+const ContractAddress ='0x7af1B1Ff18bBf58b1Af95eD6abD4293A80245d89';
 const abi = [
     {
         "inputs": [

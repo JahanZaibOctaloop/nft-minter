@@ -6,7 +6,8 @@ import NftMint from './NftMint';
 import ListLandNft from './ListLandNft';
 
 
-const contractAddress = '0x2e4B2f297b751EaB274e06A7a307d23c54AE23D5';
+// const contractAddress = '0x2e4B2f297b751EaB274e06A7a307d23c54AE23D5';
+const contractAddress = '0x14e444a01Dd378Fd37380E8d01e65D2c4321ED82'
 const contractABI = [
     {
         "inputs": [
@@ -788,7 +789,10 @@ const contractABI = [
     }
 ];
 
-const marketContract = '0x2a0889cb39d7f2452c21760D8967E6f3978f1b4f'
+// const marketContract = '0x2a0889cb39d7f2452c21760D8967E6f3978f1b4f'
+//new contract 
+const marketContract = '0x7af1B1Ff18bBf58b1Af95eD6abD4293A80245d89'
+
 const abi = [
     {
         "inputs": [
